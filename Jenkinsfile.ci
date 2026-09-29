@@ -12,6 +12,10 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '15'))
     }
 
+    triggers {
+        githubPush()
+    }
+
     stages {
         stage('Checkout') {
             steps {
