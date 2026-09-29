@@ -435,6 +435,16 @@ a {
 .cf-btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+  filter: grayscale(0.25);
+}
+
+.cf-btn:focus-visible,
+.cf-tab:focus-visible,
+.cf-input:focus-visible,
+.cf-textarea:focus-visible,
+.cf-select:focus-visible {
+  outline: 3px solid rgba(47, 128, 237, 0.28);
+  outline-offset: 2px;
 }
 
 .cf-field-grid {
@@ -476,6 +486,13 @@ a {
   border-color: var(--cf-accent);
 }
 
+.cf-input.ng-invalid.ng-touched,
+.cf-textarea.ng-invalid.ng-touched,
+.cf-select.ng-invalid.ng-touched {
+  border-color: var(--cf-danger);
+  background: #fffafa;
+}
+
 .cf-textarea {
   min-height: 110px;
   resize: vertical;
@@ -511,6 +528,14 @@ a {
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.cf-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.cf-table tbody tr:hover {
+  background: #f8fbff;
 }
 
 .cf-table tr:last-child td {

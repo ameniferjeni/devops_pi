@@ -1,0 +1,22 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: chatbot-service
+  datasource:
+    url: jdbc:mysql://mysql:3306/codingfactory
+    username: root
+    password: ${MYSQL_ROOT_PASSWORD:codingfactory}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka/
+
+logging:
+  level:
+    root: INFO

@@ -6,8 +6,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-codingfactory}
       MYSQL_DATABASE: codingfactory
-    ports:
-      - "3306:3306"
+    # Pas de port 3306 sur l'hôte : MySQL local occupe souvent 3306.
+    # Le backend accède à mysql:3306 via le réseau Docker.
+    expose:
+      - "3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -17,20 +19,7 @@ services:
       retries: 8
       start_period: 30s
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: codingfactory-backend
-    restart: unless-stopped
-    depends_on:
-      mysql:
-        condition: service_healthy
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-codingfactory}
-    ports:
-      - "8081:8081"
+  # legacy: monolithic backend removed in favor of microservices below
 
   frontend:
     build:
@@ -39,9 +28,84 @@ services:
     container_name: codingfactory-frontend
     restart: unless-stopped
     depends_on:
-      - backend
+      - gateway
     ports:
-      - "8080:80"
+      - "8083:80"
+
+  eureka:
+    build:
+      context: ./backend/eureka-server
+      dockerfile: Dockerfile
+    container_name: codingfactory-eureka
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+
+  gateway:
+    build:
+      context: ./backend/gateway
+      dockerfile: Dockerfile
+    container_name: codingfactory-gateway
+    restart: unless-stopped
+    depends_on:
+      - eureka
+      - pfe-service
+      - chatbot-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+    ports:
+      - "8090:8085"
+
+  pfe-service:
+    build:
+      context: ./backend/pfe-service
+      dockerfile: Dockerfile
+    container_name: codingfactory-pfe
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - eureka
+      - ml-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-codingfactory}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      ML_SERVICE_URL: http://ml-service:8084
+    ports:
+      - "8081:8081"
+
+  ml-service:
+    build:
+      context: ./backend/ml-service
+      dockerfile: Dockerfile
+    container_name: codingfactory-ml
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql+pymysql://root:${MYSQL_ROOT_PASSWORD:-codingfactory}@mysql:3306/codingfactory
+    depends_on:
+      - mysql
+    ports:
+      - "8084:8084"
+    volumes:
+      - ml_model_data:/app/model_store
+
+  chatbot-service:
+    build:
+      context: ./backend/chatbot-service
+      dockerfile: Dockerfile
+    container_name: codingfactory-chatbot
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - eureka
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-codingfactory}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+    ports:
+      - "8082:8082"
 
 volumes:
   mysql_data:
+  ml_model_data:

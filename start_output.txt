@@ -1,0 +1,9 @@
+
+CodingFactory project started (docker or local fallback).
+Eureka: http://localhost:8761
+Gateway: http://localhost:8085
+PFE: http://localhost:8081
+Chatbot: http://localhost:8082
+Frontend: http://localhost:4200
+
+Appuyez sur une touche pour continuer... 

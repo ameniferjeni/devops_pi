@@ -45,9 +45,13 @@ docker compose up --build -d
 
 | Service | URL |
 |---------|-----|
-| Application (Angular + proxy API) | http://localhost:8080 |
-| API REST directe | http://localhost:8081 |
-| MySQL | localhost:3306 (mot de passe : `codingfactory`) |
+| Application (Angular + proxy API) | http://localhost:8083 |
+| Gateway API | http://localhost:8090 |
+| API PFE directe | http://localhost:8081 |
+| ML health | http://localhost:8084/health |
+
+Arrêtez `start-CODINGFACTORY.bat` avant Docker, ou changez les ports via `.env` : `BACKEND_HOST_PORT=8081`.
+| MySQL | uniquement réseau Docker (`mysql:3306`) — mot de passe : `codingfactory` |
 
 Variable optionnelle : `MYSQL_ROOT_PASSWORD` dans un fichier `.env` à la racine.
 
@@ -61,6 +65,13 @@ backend/Dockerfile
 frontend/Dockerfile
 frontend/nginx.conf           # Reverse proxy /api → backend
 ```
+
+## Git push vs Docker Desktop
+
+- **`git push`** envoie le code sur GitHub et lance la CI/CD **sur les serveurs GitHub** — cela ne démarre rien dans Docker Desktop sur votre PC.
+- Pour voir les conteneurs **en local** : `docker compose up --build -d`, puis ouvrez Docker Desktop → **Containers**.
+
+Si le build frontend échoue sur `npm ci`, resynchronisez le lockfile : `cd frontend && npm install`, puis recommitez `package-lock.json`.
 
 ## Initialiser Git + GitHub Actions
 

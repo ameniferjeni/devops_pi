@@ -60,6 +60,14 @@ export class PfeService {
     return this.http.post<ProjetRealise>(`${this.baseUrl}/projets`, projet);
   }
 
+  updateProjet(id: number, projet: ProjetRealise): Observable<ProjetRealise> {
+    return this.http.put<ProjetRealise>(`${this.baseUrl}/projets/${id}`, projet);
+  }
+
+  deleteProjet(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/projets/${id}`);
+  }
+
   getAllCandidatures(): Observable<Candidature[]> {
     return this.http.get<Candidature[]>(`${this.baseUrl}/candidatures`);
   }

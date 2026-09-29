@@ -47,24 +47,24 @@ type PfeTab = 'sujets' | 'projets' | 'candidatures';
           <div class="cf-field-grid">
             <div class="cf-field">
               <label for="titre">Titre</label>
-              <input id="titre" class="cf-input" [(ngModel)]="sujet.titre" name="titre" required />
+              <input id="titre" class="cf-input" [(ngModel)]="sujet.titre" name="titre" minlength="3" maxlength="120" required />
             </div>
             <div class="cf-field">
               <label for="domaine">Domaine</label>
-              <input id="domaine" class="cf-input" [(ngModel)]="sujet.domaine" name="domaine" required />
+              <input id="domaine" class="cf-input" [(ngModel)]="sujet.domaine" name="domaine" minlength="2" maxlength="80" required />
             </div>
             <div class="cf-field">
               <label for="technologie">Technologie</label>
-              <input id="technologie" class="cf-input" [(ngModel)]="sujet.technologie" name="technologie" required />
+              <input id="technologie" class="cf-input" [(ngModel)]="sujet.technologie" name="technologie" minlength="2" maxlength="80" required />
             </div>
             <div class="cf-field">
               <label for="entreprise">Entreprise</label>
-              <input id="entreprise" class="cf-input" [(ngModel)]="sujet.entreprise" name="entreprise" required />
+              <input id="entreprise" class="cf-input" [(ngModel)]="sujet.entreprise" name="entreprise" minlength="2" maxlength="120" required />
             </div>
           </div>
           <div class="cf-field">
             <label for="description">Description</label>
-            <textarea id="description" class="cf-textarea" [(ngModel)]="sujet.description" name="description" required></textarea>
+            <textarea id="description" class="cf-textarea" [(ngModel)]="sujet.description" name="description" minlength="20" maxlength="2000" required></textarea>
           </div>
           <label class="cf-field">
             <input type="checkbox" [(ngModel)]="sujet.actif" name="actif" />
@@ -116,28 +116,31 @@ type PfeTab = 'sujets' | 'projets' | 'candidatures';
       <section class="cf-panel" *ngIf="adminMode">
         <div class="cf-panel-head">
           <div>
-            <h2>Ajouter un projet réalisé</h2>
+            <h2>{{ editingProjetId ? 'Modifier un projet réalisé' : 'Ajouter un projet réalisé' }}</h2>
             <p>Archive des livrables PFE (méthode, résultats).</p>
           </div>
         </div>
         <form (ngSubmit)="saveProjet()">
           <div class="cf-field">
             <label for="projetTitre">Titre</label>
-            <input id="projetTitre" class="cf-input" [(ngModel)]="projet.titre" name="projetTitre" required />
+            <input id="projetTitre" class="cf-input" [(ngModel)]="projet.titre" name="projetTitre" minlength="3" maxlength="120" required />
           </div>
           <div class="cf-field">
             <label for="projetDescription">Description</label>
-            <textarea id="projetDescription" class="cf-textarea" [(ngModel)]="projet.description" name="projetDescription" required></textarea>
+            <textarea id="projetDescription" class="cf-textarea" [(ngModel)]="projet.description" name="projetDescription" minlength="20" maxlength="2000" required></textarea>
           </div>
           <div class="cf-field">
             <label for="methode">Méthodologie</label>
-            <textarea id="methode" class="cf-textarea" [(ngModel)]="projet.methode" name="methode" required></textarea>
+            <textarea id="methode" class="cf-textarea" [(ngModel)]="projet.methode" name="methode" minlength="10" maxlength="2000" required></textarea>
           </div>
           <div class="cf-field">
             <label for="resultat">Résultats</label>
-            <textarea id="resultat" class="cf-textarea" [(ngModel)]="projet.resultat" name="resultat" required></textarea>
+            <textarea id="resultat" class="cf-textarea" [(ngModel)]="projet.resultat" name="resultat" minlength="10" maxlength="2000" required></textarea>
           </div>
-          <button type="submit" class="cf-btn cf-btn-primary">Publier le projet</button>
+          <div class="cf-actions">
+            <button type="submit" class="cf-btn cf-btn-primary">{{ editingProjetId ? 'Enregistrer les modifications' : 'Publier le projet' }}</button>
+            <button type="button" class="cf-btn cf-btn-ghost" *ngIf="editingProjetId" (click)="resetProjet()">Annuler</button>
+          </div>
         </form>
       </section>
 
@@ -162,6 +165,10 @@ type PfeTab = 'sujets' | 'projets' | 'candidatures';
             <div class="cf-detail-block cf-detail-result">
               <span class="cf-detail-label">Résultats</span>
               <p>{{ p.resultat }}</p>
+            </div>
+            <div class="cf-actions" *ngIf="adminMode">
+              <button type="button" class="cf-btn cf-btn-ghost cf-btn-sm" (click)="editProjet(p)">Modifier</button>
+              <button type="button" class="cf-btn cf-btn-danger cf-btn-sm" (click)="deleteProjet(p.id!)">Supprimer</button>
             </div>
           </article>
         </div>
@@ -188,11 +195,11 @@ type PfeTab = 'sujets' | 'projets' | 'candidatures';
           <div class="cf-field-grid">
             <div class="cf-field">
               <label for="cNom">Nom</label>
-              <input id="cNom" class="cf-input" [(ngModel)]="candidatureSubmit.nom" name="cNom" required />
+              <input id="cNom" class="cf-input" [(ngModel)]="candidatureSubmit.nom" name="cNom" minlength="2" maxlength="80" required />
             </div>
             <div class="cf-field">
               <label for="cPrenom">Prénom</label>
-              <input id="cPrenom" class="cf-input" [(ngModel)]="candidatureSubmit.prenom" name="cPrenom" required />
+              <input id="cPrenom" class="cf-input" [(ngModel)]="candidatureSubmit.prenom" name="cPrenom" minlength="2" maxlength="80" required />
             </div>
             <div class="cf-field">
               <label for="cEmail">Email</label>
@@ -201,10 +208,20 @@ type PfeTab = 'sujets' | 'projets' | 'candidatures';
           </div>
           <div class="cf-field">
             <label for="motivation">Lettre de motivation</label>
-            <textarea id="motivation" class="cf-textarea" [(ngModel)]="candidatureSubmit.messageMotivation" name="messageMotivation" required></textarea>
+            <textarea id="motivation" class="cf-textarea" [(ngModel)]="candidatureSubmit.messageMotivation" name="messageMotivation" minlength="30" maxlength="4000" required></textarea>
           </div>
           <button type="submit" class="cf-btn cf-btn-primary">Envoyer ma candidature</button>
         </form>
+
+        <section class="cf-alert cf-alert-success" *ngIf="lastSubmittedCandidature as submitted">
+          <strong>Candidature envoyée.</strong>
+          <span *ngIf="submitted.scorePourcentage !== null && submitted.scorePourcentage !== undefined; else scorePending">
+            Score ML : <strong>{{ submitted.scorePourcentage }}%</strong>
+            <span *ngIf="submitted.decisionSuggeree"> — recommandation : {{ submitted.decisionSuggeree }}</span>
+          </span>
+          <ng-template #scorePending>Score ML en attente de la décision de l'administrateur.</ng-template>
+          <span> — statut : EN_ATTENTE.</span>
+        </section>
       </section>
 
       <section class="cf-panel" *ngIf="adminMode">
@@ -229,16 +246,30 @@ type PfeTab = 'sujets' | 'projets' | 'candidatures';
                 <th>Sujet</th>
                 <th>Candidat</th>
                 <th>Statut</th>
+                <th>Score ML</th>
+                <th>Décision suggérée</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let c of candidatures">
                 <td>{{ c.id }}</td>
-                <td>{{ sujetTitle(c.sujetPfeId) }}</td>
-                <td>{{ candidatLabel(c.candidatId) }}</td>
+                <td>{{ sujetTitle(c.sujetPfeId, c.sujetPfe) }}</td>
+                <td>{{ candidatLabel(c.candidatId, c.candidat) }}</td>
                 <td>
                   <span class="cf-badge" [ngClass]="statusClass(c.statut)">{{ c.statut || 'EN_ATTENTE' }}</span>
+                </td>
+                <td>
+                  <span *ngIf="isFinalized(c) && c.scorePourcentage !== null && c.scorePourcentage !== undefined; else scorePending">
+                    {{ c.scorePourcentage }}%
+                  </span>
+                  <ng-template #scorePending><span class="cf-badge cf-badge-muted">Non disponible</span></ng-template>
+                </td>
+                <td>
+                  <span *ngIf="isFinalized(c) && c.decisionSuggeree; else decisionPending" class="cf-badge cf-badge-muted">
+                    {{ c.decisionSuggeree }}
+                  </span>
+                  <ng-template #decisionPending>-</ng-template>
                 </td>
                 <td>
                   <div class="cf-actions">
@@ -262,6 +293,7 @@ export class PfeComponent implements OnInit {
   projets: ProjetRealise[] = [];
   candidatures: Candidature[] = [];
   candidats: CandidatSummary[] = [];
+  lastSubmittedCandidature: Candidature | null = null;
 
   searchSujet = '';
   onlyActive = true;
@@ -282,6 +314,7 @@ export class PfeComponent implements OnInit {
   };
 
   editingSujetId: number | null = null;
+  editingProjetId: number | null = null;
 
   constructor(private pfeService: PfeService) {}
 
@@ -392,14 +425,43 @@ export class PfeComponent implements OnInit {
 
   saveProjet(): void {
     this.clearMessages();
-    this.pfeService.createProjet(this.projet).subscribe({
+    const updating = this.editingProjetId !== null;
+    const action = this.editingProjetId !== null
+      ? this.pfeService.updateProjet(this.editingProjetId, this.projet)
+      : this.pfeService.createProjet(this.projet);
+    action.subscribe({
       next: () => {
-        this.projet = { titre: '', description: '', methode: '', resultat: '' };
-        this.showSuccess('Projet ajouté.');
+        this.resetProjet();
+        this.showSuccess(updating ? 'Projet modifié.' : 'Projet ajouté.');
         this.loadProjets();
       },
       error: () => this.showError('Ajout du projet échoué.')
     });
+  }
+
+  editProjet(projet: ProjetRealise): void {
+    this.projet = { ...projet };
+    this.editingProjetId = projet.id ?? null;
+    this.tab = 'projets';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  deleteProjet(id: number): void {
+    if (!confirm('Supprimer ce projet ?')) {
+      return;
+    }
+    this.pfeService.deleteProjet(id).subscribe({
+      next: () => {
+        this.showSuccess('Projet supprimé.');
+        this.loadProjets();
+      },
+      error: () => this.showError('Suppression du projet impossible.')
+    });
+  }
+
+  resetProjet(): void {
+    this.projet = { titre: '', description: '', methode: '', resultat: '' };
+    this.editingProjetId = null;
   }
 
   startCandidature(sujet: SujetPfe): void {
@@ -414,7 +476,8 @@ export class PfeComponent implements OnInit {
       return;
     }
     this.pfeService.submitCandidature(this.candidatureSubmit).subscribe({
-      next: () => {
+      next: submitted => {
+        this.lastSubmittedCandidature = submitted;
         this.candidatureSubmit = {
           sujetPfeId: 0,
           nom: '',
@@ -422,7 +485,7 @@ export class PfeComponent implements OnInit {
           email: '',
           messageMotivation: ''
         };
-        this.showSuccess("Candidature enregistrée — statut EN_ATTENTE. L'équipe CodingFactory vous recontactera.");
+        this.showSuccess("Candidature enregistrée. Le score ML sera calculé après la décision de l'administrateur.");
         this.loadCandidatures();
         this.loadCandidats();
       },
@@ -447,25 +510,34 @@ export class PfeComponent implements OnInit {
     });
   }
 
-  sujetTitle(id: number): string {
-    const s = this.sujets.find(x => x.id === id);
-    return s ? s.titre : `#${id}`;
+  sujetTitle(id?: number, embedded?: Candidature['sujetPfe']): string {
+    const resolvedId = id ?? embedded?.id;
+    const s = this.sujets.find(x => x.id === resolvedId);
+    return s?.titre ?? embedded?.titre ?? `#${resolvedId ?? ''}`;
   }
 
-  candidatLabel(id: number): string {
-    const c = this.candidats.find(x => x.id === id);
-    return c ? `${c.prenom} ${c.nom}` : `#${id}`;
+  candidatLabel(id?: number, embedded?: Candidature['candidat']): string {
+    const resolvedId = id ?? embedded?.id;
+    const c = this.candidats.find(x => x.id === resolvedId);
+    return c ? `${c.prenom} ${c.nom}` : embedded ? `${embedded.prenom} ${embedded.nom}` : `#${resolvedId ?? ''}`;
   }
 
   statusClass(statut?: string): string {
     switch ((statut || 'EN_ATTENTE').toUpperCase()) {
       case 'ACCEPTE':
+      case 'ACCEPTEE':
         return 'cf-badge-success';
       case 'REFUSE':
+      case 'REFUSEE':
         return 'cf-badge-danger';
       default:
         return 'cf-badge-warning';
     }
+  }
+
+  isFinalized(candidature: Candidature): boolean {
+    const status = (candidature.statut || 'EN_ATTENTE').toUpperCase();
+    return status === 'ACCEPTEE' || status === 'REFUSEE' || status === 'ACCEPTE' || status === 'REFUSE';
   }
 
   private emptySujet(): SujetPfe {
