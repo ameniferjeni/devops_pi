@@ -28,7 +28,7 @@ services:
     depends_on:
       - gateway
     ports:
-      - "8083:80"
+      - "${FRONTEND_HOST_PORT:-8083}:80"
 
   eureka:
     build:
@@ -51,7 +51,7 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
     ports:
-      - "8090:8085"
+      - "${GATEWAY_HOST_PORT:-8090}:8085"
 
   pfe-service:
     build:
@@ -68,7 +68,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
       ML_SERVICE_URL: http://ml-service:8084
     ports:
-      - "8081:8081"
+      - "${PFE_HOST_PORT:-8081}:8081"
 
   ml-service:
     build:
@@ -80,7 +80,7 @@ services:
     depends_on:
       - mysql
     ports:
-      - "8084:8084"
+      - "${ML_HOST_PORT:-8084}:8084"
     volumes:
       - ml_model_data:/app/model_store
 
@@ -97,7 +97,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-codingfactory}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
     ports:
-      - "8082:8082"
+      - "${CHATBOT_HOST_PORT:-8082}:8082"
 
 volumes:
   mysql_data:

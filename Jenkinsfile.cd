@@ -3,6 +3,11 @@ pipeline {
 
     environment {
         EUREKA_HOST_PORT = '8771'
+        PFE_HOST_PORT = '8181'
+        CHATBOT_HOST_PORT = '8182'
+        FRONTEND_HOST_PORT = '8183'
+        ML_HOST_PORT = '8184'
+        GATEWAY_HOST_PORT = '8190'
     }
 
     options {
@@ -35,14 +40,14 @@ pipeline {
                 sh '''
                   set -eu
                   for i in $(seq 1 36); do
-                    if curl -sf http://localhost:8081/api/pfe/stats >/dev/null; then
+                    if curl -sf http://localhost:${PFE_HOST_PORT}/api/pfe/stats >/dev/null; then
                       break
                     fi
                     sleep 5
                   done
-                  curl -sf http://localhost:8081/api/pfe/stats >/dev/null
-                  curl -sf http://localhost:8084/health >/dev/null
-                  curl -sf http://localhost:8083/ >/dev/null
+                  curl -sf http://localhost:${PFE_HOST_PORT}/api/pfe/stats >/dev/null
+                  curl -sf http://localhost:${ML_HOST_PORT}/health >/dev/null
+                  curl -sf http://localhost:${FRONTEND_HOST_PORT}/ >/dev/null
                 '''
             }
         }
