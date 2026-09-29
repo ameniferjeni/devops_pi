@@ -1,5 +1,7 @@
 package com.codingfactory.backend.service;
 
+import com.codingfactory.backend.dto.PfeMatchingRequestDto;
+import com.codingfactory.backend.dto.PfeMatchingResponseDto;
 import com.codingfactory.backend.dto.SujetPfeDto;
 
 import java.util.List;
@@ -10,4 +12,5 @@ public interface SujetPfeService {
     void deleteSujet(Long id);
     List<SujetPfeDto> getAllSujets();
     SujetPfeDto getSujetById(Long id);
+    PfeMatchingResponseDto calculateMatching(PfeMatchingRequestDto request);
 }

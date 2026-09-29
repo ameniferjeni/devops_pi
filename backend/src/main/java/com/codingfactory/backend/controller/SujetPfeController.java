@@ -1,5 +1,7 @@
 package com.codingfactory.backend.controller;
 
+import com.codingfactory.backend.dto.PfeMatchingRequestDto;
+import com.codingfactory.backend.dto.PfeMatchingResponseDto;
 import com.codingfactory.backend.dto.SujetPfeDto;
 import com.codingfactory.backend.service.SujetPfeService;
 import jakarta.validation.Valid;
@@ -23,6 +25,11 @@ public class SujetPfeController {
     @GetMapping("/sujets")
     public ResponseEntity<List<SujetPfeDto>> getAllSujets() {
         return ResponseEntity.ok(sujetPfeService.getAllSujets());
+    }
+
+    @PostMapping("/sujets/match")
+    public ResponseEntity<PfeMatchingResponseDto> calculateMatching(@RequestBody PfeMatchingRequestDto request) {
+        return ResponseEntity.ok(sujetPfeService.calculateMatching(request));
     }
 
     @GetMapping("/sujets/{id}")

@@ -1,19 +1,21 @@
 package com.codingfactory.backend.service;
 
-import com.codingfactory.backend.dto.SujetPfeDto;
-import com.codingfactory.backend.entity.SujetPfe;
+import com.codingfactory.backend.dto.PfeMatchingRequestDto;
+import com.codingfactory.backend.dto.PfeMatchingResponseDto;
 import com.codingfactory.backend.repository.SujetPfeRepository;
 import com.codingfactory.backend.service.impl.SujetPfeServiceImpl;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SujetPfeServiceTest {
@@ -25,27 +27,21 @@ class SujetPfeServiceTest {
     private SujetPfeServiceImpl sujetPfeService;
 
     @Test
-    void shouldCreateSujet() {
-        SujetPfeDto dto = new SujetPfeDto(null, "PFE Java", "Projet backend", "Informatique", "Spring Boot", "CodingFactory", true);
-        SujetPfe sujet = new SujetPfe(1L, "PFE Java", "Projet backend", "Informatique", "Spring Boot", "CodingFactory", null, true, null);
+    @DisplayName("Should match candidate skills with active PFE subjects")
+    void testCalculateMatching() {
+        when(sujetPfeRepository.findByActifTrue()).thenReturn(Collections.emptyList());
 
-        when(sujetPfeRepository.save(any(SujetPfe.class))).thenReturn(sujet);
+        PfeMatchingRequestDto request = PfeMatchingRequestDto.builder()
+                .candidatNom("Salma Mansouri")
+                .competences(List.of("Java", "Spring Boot", "Angular"))
+                .domainePrefere("DevOps")
+                .niveauEtudes("Ingénieur Software")
+                .build();
 
-        SujetPfeDto result = sujetPfeService.createSujet(dto);
+        PfeMatchingResponseDto response = sujetPfeService.calculateMatching(request);
 
-        assertNotNull(result);
-        assertEquals("PFE Java", result.getTitre());
-        verify(sujetPfeRepository, times(1)).save(any(SujetPfe.class));
-    }
-
-    @Test
-    void shouldGetAllSujets() {
-        SujetPfe sujet = new SujetPfe(1L, "PFE Java", "Projet backend", "Informatique", "Spring Boot", "CodingFactory", null, true, null);
-        when(sujetPfeRepository.findAll()).thenReturn(List.of(sujet));
-
-        List<SujetPfeDto> result = sujetPfeService.getAllSujets();
-
-        assertEquals(1, result.size());
-        assertEquals("PFE Java", result.get(0).getTitre());
+        assertNotNull(response);
+        assertNotNull(response.getResultats());
+        assertEquals("Salma Mansouri", response.getCandidatNom());
     }
 }

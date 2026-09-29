@@ -2,10 +2,18 @@ export interface ChatbotResponse {
   intention: string;
   intentionLabel: string;
   reponse: string;
-  service: string;
+  serviceNom?: string;
   serviceDescription?: string;
-  consultant: string;
+  consultantNom?: string;
+  consultantRole?: string;
   consultantEmail?: string;
+  consultantPhone?: string;
+  consultantAvatar?: string;
+  suggestions?: string[];
+  actionType?: string;
+  // Backwards compatibility
+  service?: string;
+  consultant?: string;
 }
 
 export interface ChatbotServiceInfo {
@@ -13,4 +21,9 @@ export interface ChatbotServiceInfo {
   nom: string;
   description: string;
   consultantsCount: number;
+  expertNom?: string;
+  expertRole?: string;
+  expertEmail?: string;
+  expertPhone?: string;
+  technologies?: string[];
 }

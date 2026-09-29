@@ -1,11 +1,15 @@
 package com.codingfactory.chatbot.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatbotRequestDto {
     private String question;
     private String prenom;
-    public ChatbotRequestDto() {}
-    public String getQuestion() { return question; }
-    public void setQuestion(String question) { this.question = question; }
-    public String getPrenom() { return prenom; }
-    public void setPrenom(String prenom) { this.prenom = prenom; }
+    private String entreprise;
+    private String role;
 }

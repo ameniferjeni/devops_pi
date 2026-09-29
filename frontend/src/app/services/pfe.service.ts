@@ -28,6 +28,33 @@ export interface PfeStats {
   candidaturesEnAttente: number;
 }
 
+export interface PfeMatchingRequest {
+  candidatNom?: string;
+  competences: string[];
+  domainePrefere?: string;
+  niveauEtudes?: string;
+}
+
+export interface PfeMatchResult {
+  sujetId: number;
+  titre: string;
+  domaine: string;
+  technologie: string;
+  entreprise: string;
+  scoreMatch: number;
+  statutMatch: 'EXCELLENT' | 'BON' | 'MOYEN';
+  competencesMatchees: string[];
+  competencesManquantes: string[];
+  recommandation: string;
+}
+
+export interface PfeMatchingResponse {
+  candidatNom: string;
+  meilleurScore: number;
+  totalSujetsAnalyses: number;
+  resultats: PfeMatchResult[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -50,6 +77,10 @@ export class PfeService {
 
   deleteSujet(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/sujets/${id}`);
+  }
+
+  calculateMatching(payload: PfeMatchingRequest): Observable<PfeMatchingResponse> {
+    return this.http.post<PfeMatchingResponse>(`${this.baseUrl}/sujets/match`, payload);
   }
 
   getAllProjets(): Observable<ProjetRealise[]> {

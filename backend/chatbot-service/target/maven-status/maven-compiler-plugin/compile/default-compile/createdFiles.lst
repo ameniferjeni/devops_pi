@@ -1,4 +1,6 @@
 com\codingfactory\chatbot\controller\ChatbotController.class
+com\codingfactory\chatbot\dto\ChatbotResponseDto$ChatbotResponseDtoBuilder.class
+com\codingfactory\chatbot\dto\ServiceConsultingSummaryDto$ServiceConsultingSummaryDtoBuilder.class
 com\codingfactory\chatbot\config\SecurityConfig.class
 com\codingfactory\chatbot\dto\ChatbotResponseDto.class
 com\codingfactory\chatbot\config\JwtUtils.class
@@ -7,3 +9,4 @@ com\codingfactory\chatbot\config\FeignClientConfig.class
 com\codingfactory\chatbot\config\JwtAuthenticationFilter.class
 com\codingfactory\chatbot\dto\ChatbotRequestDto.class
 com\codingfactory\chatbot\dto\ServiceConsultingSummaryDto.class
+com\codingfactory\chatbot\service\ChatbotEngineService.class
