@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '15'))
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Docker build') {
+            steps {
+                sh 'docker compose build'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker compose up -d'
+            }
+        }
+
+        stage('Smoke tests') {
+            steps {
+                sh '''
+                  set -eu
+                  for i in $(seq 1 36); do
+                    if curl -sf http://localhost:8081/api/pfe/stats >/dev/null; then
+                      break
+                    fi
+                    sleep 5
+                  done
+                  curl -sf http://localhost:8081/api/pfe/stats >/dev/null
+                  curl -sf http://localhost:8084/health >/dev/null
+                  curl -sf http://localhost:8083/ >/dev/null
+                '''
+            }
+        }
+    }
+
+    post {
+        failure {
+            sh 'docker compose ps || true'
+            sh 'docker compose logs --tail=120 || true'
+        }
+        success {
+            echo 'CD CodingFactory terminée : application déployée.'
+        }
+    }
+}
