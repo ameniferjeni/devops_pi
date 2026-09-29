@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        EUREKA_HOST_PORT = '8771'
+    }
+
     options {
         timestamps()
         disableConcurrentBuilds()
