@@ -1,7 +1,6 @@
 services:
   mysql:
     image: mysql:8.0
-    container_name: codingfactory-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-codingfactory}
@@ -25,7 +24,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: codingfactory-frontend
     restart: unless-stopped
     depends_on:
       - gateway
@@ -36,7 +34,6 @@ services:
     build:
       context: ./backend/eureka-server
       dockerfile: Dockerfile
-    container_name: codingfactory-eureka
     restart: unless-stopped
     ports:
       - "8761:8761"
@@ -45,7 +42,6 @@ services:
     build:
       context: ./backend/gateway
       dockerfile: Dockerfile
-    container_name: codingfactory-gateway
     restart: unless-stopped
     depends_on:
       - eureka
@@ -61,7 +57,6 @@ services:
     build:
       context: ./backend/pfe-service
       dockerfile: Dockerfile
-    container_name: codingfactory-pfe
     restart: unless-stopped
     depends_on:
       - mysql
@@ -79,7 +74,6 @@ services:
     build:
       context: ./backend/ml-service
       dockerfile: Dockerfile
-    container_name: codingfactory-ml
     restart: unless-stopped
     environment:
       DATABASE_URL: mysql+pymysql://root:${MYSQL_ROOT_PASSWORD:-codingfactory}@mysql:3306/codingfactory
@@ -94,7 +88,6 @@ services:
     build:
       context: ./backend/chatbot-service
       dockerfile: Dockerfile
-    container_name: codingfactory-chatbot
     restart: unless-stopped
     depends_on:
       - mysql
